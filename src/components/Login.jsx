@@ -6,7 +6,7 @@ import authService from "../appwrite/auth.js";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 
-export function Login(props) {
+export default function Login(props) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [error, setError] = useState("");
