@@ -4,36 +4,39 @@ import './App.css'
 import authService from './appwrite/auth'
 import { login, logout } from './store/authSlice'
 import { Footer, Header } from './components'
+import { Outlet } from 'react-router-dom'
 
 function App() {
-  const [loading, setLoading] = useState(true)
-  const dispatch = useDispatch()
+  const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    authService.getCurrentUser()
-      .then((userData) => {
-        if(userData) {
-          dispatch(login({userData}))
-        } else {
-          dispatch(logout())
-        }
-      })
-      .finally(
-        () => setLoading(false)
-      )
-  }, [])
+    const fetchUser = async () => {
+      const userData = await authService.getCurrentUser();
+      if (userData) {
+        dispatch(login({ userData }));
+      } else {
+        dispatch(logout());
+      }
+      setLoading(false);
+    };
 
-  return !loading ? (
-    <div className='min-h-screen flex flex-wrap content-between bg-gray-400'>
-      <div className='w-full block'>
-        <Header />
-        <main>
-          Todo :
-        </main>
-        <Footer />
-      </div>
+    fetchUser();
+  }, [dispatch]);
+
+  if (loading) {
+    return <div className="p-10 text-center">Checking session...</div>;
+  }
+
+  return (
+    <div className="min-h-screen flex flex-col bg-gray-400">
+      <Header />
+      <main className="flex-1">
+        todo: <Outlet />
+      </main>
+      <Footer />
     </div>
-  ) : null;
+  );
 
 }
 
